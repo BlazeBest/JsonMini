@@ -20,6 +20,23 @@ namespace JsonMini
     {
         public static T ReadData<T>(JsonData data) => data.ReadData<T>();
 
+        public static void Create(string file, Dictionary<string, JsonData> data)
+        {
+            string buffer = "{";
+            foreach (var arg in data)
+            {
+                if (buffer.Length > 1)
+                    buffer += ",";
+
+                buffer += "\"" + arg.Key + "\":";
+                if (arg.Value.type == JsonType.String)
+                    buffer += "\"" + arg.Value.data + "\"";
+                else
+                    buffer += arg.Value.data;
+            }
+            File.WriteAllText(file, buffer, Encoding.UTF8);
+        }
+        
         public static Dictionary<string, JsonData> Reader(string file)
         {
             if (!File.Exists(file))
