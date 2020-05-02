@@ -33,28 +33,21 @@ namespace JsonMini
             foreach(string arg in args)
             {
                 string buffer = arg.Trim();
-                string[] content = buffer.Split(new char[] { ':' }, 1);
+                string[] content = buffer.Split(new char[] { ':' }, 2);
                 if (content.Length < 2)
                     continue;
 
                 if (content[0].Length < 1 && content[1].Length < 1)
                     continue;
-
                 // [0] ~ String Name
-                if (content[0][0] != '"')
-                    throw new FileLoadException();
-                content[0] = content[0].Remove(0, 1);
-               
-                if (content[0][content[0].Length - 1] != '"')
-                    throw new FileLoadException();
-                content[0] = content[0].Remove(content[0].Length - 1, 1);
+                content[0] = content[0].Trim(new char[] { '"', ' ' });
                 // ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 
                 // [1] ~ Source
                 if (!UnboxText(content[1], out JsonData data))
                     continue;
                 // ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-
+                Console.WriteLine(content[0]);
                 result.Add(content[0], data);
             }
 
@@ -63,21 +56,12 @@ namespace JsonMini
 
         internal static string WorkingOnHead(string text)
         {
-            string result = text.Trim();
-
-            if (result[0] != '{')
-                throw new FileLoadException();
-            result = result.Remove(0, 1);
-
-            if (result[result.Length - 1] != '}')
-                throw new FileLoadException();
-            result = result.Remove(result.Length - 1, 1);
-
+            string result = text;
             result = result.Replace("\0", "");
             result = result.Replace("\n", "");
             result = result.Replace("\r", "");
             result = result.Replace("\t", "");
-
+            result = result.Trim(new char[] { '{', '}', ' ' });
             return result;
         }
 
