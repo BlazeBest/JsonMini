@@ -108,6 +108,11 @@ namespace JsonMini
                 data.type = JsonType.String;
                 data.data = text;
             }
+            else if (text.IndexOf('.') == -1)
+            {
+                data.type = JsonType.Int;
+                data.data = int.Parse(text);
+            }
             else if (text.IndexOf('.') < text.Length)
             {
                 data.type = JsonType.Double;
