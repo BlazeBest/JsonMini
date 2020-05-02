@@ -23,44 +23,39 @@ namespace JsonMini
         public static Dictionary<string, JsonData> Reader(string file)
         {
             if (!File.Exists(file))
-                throw new Exception("Not found file!");
+                throw new FileNotFoundException();
 
             Dictionary<string, JsonData> result = new Dictionary<string, JsonData>();
             // {"Test1":false,"Test2":1,"Test3":"Text"}
             //string source = string.Empty;
             string source = WorkingOnHead("{\"Test1\":false,\"Test2\":1,\"Test3\":\"Text\"}");
-            
-            while (!string.IsNullOrEmpty(source))
+            string[] args = source.Split(',');
+            foreach(string arg in args)
             {
-                source = source.Trim();
+                string buffer = arg.Trim();
+                string[] content = buffer.Split(new char[] { ':' }, 1);
+                if (content.Length < 2)
+                    continue;
 
-                string[] resource = source.Split(new char[] { ':' }, 1);
-                if (resource.Length != 1)
-                    throw new Exception("Fail to read json data [3]");
-                source = resource[1];
+                if (content[0].Length < 1 && content[1].Length < 1)
+                    continue;
 
-                if (!source.StartsWith("\""))
-                    throw new Exception("Fail to read json data [4]");
-                resource[0] = resource[0].Remove(0, resource[0].IndexOf('"')+1);
+                // [0] ~ String Name
+                if (content[0][0] != '"')
+                    throw new FileLoadException();
+                content[0] = content[0].Remove(0, 1);
+               
+                if (content[0][content[0].Length - 1] != '"')
+                    throw new FileLoadException();
+                content[0] = content[0].Remove(content[0].Length - 1, 1);
+                // ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 
-                if (!source.EndsWith("\""))
-                    throw new Exception("Fail to read json data [5]");
-                resource[0] = resource[0].Remove(resource[0].LastIndexOf('"'));
+                // [1] ~ Source
+                if (!UnboxText(content[1], out JsonData data))
+                    continue;
+                // ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 
-                JsonType type = JsonType.None;
-                object obj = null;
-                if (resource[1].StartsWith("{"))
-                {
-                    type = JsonType.Array;
-                }
-                else
-                {
-                    string res = resource[1].Remove(resource[1].IndexOf(','));
-                    source = source.Remove(0, resource[1].IndexOf(',')+1);
-
-                    UnboxText(res, out JsonData data)
-                }
-                result.Add(resource[0].Trim(), new JsonData(type, obj));
+                result.Add(content[0], data);
             }
 
             return result;
@@ -71,11 +66,11 @@ namespace JsonMini
             string result = text.Trim();
 
             if (result[0] != '{')
-                throw new Exception("Fail to read json data [1]");
+                throw new FileLoadException();
             result = result.Remove(0, 1);
 
             if (result[result.Length - 1] != '}')
-                throw new Exception("Fail to read json data [2]");
+                throw new FileLoadException();
             result = result.Remove(result.Length - 1, 1);
 
             result = result.Replace("\0", "");
