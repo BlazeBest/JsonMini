@@ -90,12 +90,12 @@ namespace JsonMini
                 data.type = JsonType.Object;
                 data.data = null;
             }
-            else if (text.Contains("true"))
+            else if (text.Contains("True"))
             {
                 data.type = JsonType.Boolean;
                 data.data = true;
             }
-            else if (text.Contains("false"))
+            else if (text.Contains("False"))
             {
                 data.type = JsonType.Boolean;
                 data.data = false;
