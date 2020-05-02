@@ -15,7 +15,7 @@ namespace JsonMini.JsonMini
 		{
 			if (obj is int) type = JsonType.Int;
 			else if (obj is bool) type = JsonType.Boolean;
-			else if (obj is double) type = JsonType.Double;
+			else if (obj is double || obj is float) type = JsonType.Double;
 			else if (obj is string) type = JsonType.String;
 			else if (obj is Dictionary<string, JsonData>) type = JsonType.Array;
 			else type = JsonType.Object;
