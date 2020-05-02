@@ -31,12 +31,15 @@ namespace JsonMini
                 buffer += "\"" + arg.Key + "\":";
                 if (arg.Value.type == JsonType.String)
                     buffer += "\"" + arg.Value.data + "\"";
+                else if (arg.Value.type == JsonType.Double)
+                    buffer += arg.Value.data.ToString().Replace(",",".");
                 else
                     buffer += arg.Value.data;
             }
+            buffer += "}";
             File.WriteAllText(file, buffer, Encoding.UTF8);
         }
-        
+
         public static Dictionary<string, JsonData> Reader(string file)
         {
             if (!File.Exists(file))
@@ -72,13 +75,10 @@ namespace JsonMini
         internal static string WorkingOnHead(string text)
         {
             string result = text;
-            result = result.Replace("\0", "");
-            result = result.Replace("\n", "");
-            result = result.Replace("\r", "");
-            result = result.Replace("\t", "");
             result = result.Trim(new char[] { '{', '}', ' ' });
             return result;
         }
+
 
         internal static bool UnboxText(string text, out JsonData data)
         {
@@ -111,7 +111,7 @@ namespace JsonMini
             else if (text.IndexOf('.') < text.Length)
             {
                 data.type = JsonType.Double;
-                data.data = double.Parse(text);
+                data.data = double.Parse(text.Replace(".",","));
             }
             return data.type != JsonType.None;
         }
