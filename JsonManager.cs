@@ -26,9 +26,10 @@ namespace JsonMini
                 throw new FileNotFoundException();
 
             Dictionary<string, JsonData> result = new Dictionary<string, JsonData>();
-            // {"Test1":false,"Test2":1,"Test3":"Text"}
-            //string source = string.Empty;
-            string source = WorkingOnHead("{\"Test1\":false,\"Test2\":1,\"Test3\":\"Text\"}");
+
+            string readText = File.ReadAllText(file);
+            string source = WorkingOnHead(readText);
+
             string[] args = source.Split(',');
             foreach(string arg in args)
             {
@@ -39,15 +40,12 @@ namespace JsonMini
 
                 if (content[0].Length < 1 && content[1].Length < 1)
                     continue;
-                // [0] ~ String Name
-                content[0] = content[0].Trim(new char[] { '"', ' ' });
-                // ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 
-                // [1] ~ Source
+                content[0] = content[0].Trim(new char[] { '"', ' ' });
+                
                 if (!UnboxText(content[1], out JsonData data))
                     continue;
-                // ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-                Console.WriteLine(content[0]);
+
                 result.Add(content[0], data);
             }
 
