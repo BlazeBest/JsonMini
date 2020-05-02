@@ -10,8 +10,6 @@ using JsonMini.JsonMini;
  * Discord: BlazeBest#4974
  * https://github.com/BlazeBest/JsonMini/
  * https://discord.gg/8mMGM43
- * ---
- * Comment: under development
  */
 
 namespace JsonMini
